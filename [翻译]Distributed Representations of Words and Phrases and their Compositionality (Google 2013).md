@@ -21,3 +21,48 @@ vec("Madrid) - vec("Spain") + vec("France)
 ```
 
 的结果比其它任何词向量都接近于 vec("Paris")。
+
+在本文中，我们提出原始Skip-gram模型的几个扩展。在训练过程中，对频繁单词进行二次采样会导致显著的加速（大约2-10倍），并且提高低频率单词的单词表示的准确性。此外，我们提出了一种用于训练Skip-gram模型的简化NCE(Noise Contrastive Estimation/噪声对比估计)。结果表明，与更复杂的分层softmax相比，它有更快的训练速度，而且频率单词的向量表示也更好。
+
+单词表示天生受限于惯用短语而不是独立单词的表示。例如，Boston Globe 是报纸，它不是单词 Boston 和 Globe 的含义的自然组合。因此，用向量来表示整个短语会使得Skip-gram模型更具有表现力。其它旨在通过组合单词向量（例如递归自动编码器 recursive autoencoders）来表示句子意义的技术也将受益于使用短语向量而不是单词向量。
+
+模型从基于单词的扩展到基于短语的相对简单。首先，我们使用 data-driven的方法识别出大量的短语，然后在训练过程中将短语看作独立的tokens（标记）。为了评估短语向量的质量，我们开发了一个包含单词和短语的类比推理任务测试集。测试集中的一个典型类比对是：
+
+```math
+Montreal: Montreal Canadiens :: Toronto : Toronto Maple Leafs
+```
+
+如果最靠近表达式：
+
+```math
+vec("Montral Canadiens") - vec("Montreal") + vec("Toronto)
+```
+
+的表示是 vec("Toronto Maple Leafs")，则被认为回答正确。
+
+最后，我们描述Skip-gram模型的另一个有趣属性。我们发现简单的向量加法通常可以产生有意义的结果。例如，
+
+```math
+vec("Russia") + vec("river")
+```
+
+接近于
+
+```math
+vec("Volga River")
+```
+
+而
+
+```math
+vec("Germany") + vec("capital")
+```
+
+接近于
+
+```math
+vec("Berlin")
+```
+
+这种组合表明，通过对单词向量表示使用基本的数学运算，可以获得非明显程度的语言理解。
+
